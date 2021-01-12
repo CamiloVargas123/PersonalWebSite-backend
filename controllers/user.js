@@ -1,6 +1,7 @@
 const bcryp = require('bcrypt');
 const jwt = require("../services/jwt");
 const User = require('../models/user');
+const user = require('../models/user');
 
 function signUp(req, res) {
     const user = new User();
@@ -78,7 +79,18 @@ function signIn(req, res) {
     })
 }
 
+function getUsers(req, res) {
+    User.find().then(users => {
+        if(!users){
+            res.status(404).send({message: "no se ha encontrado ningun usuario"});
+        }else {
+            res.status(200).send({users});
+        }
+    })
+}
+
 module.exports = {
     signUp,
-    signIn
+    signIn,
+    getUsers
 }
