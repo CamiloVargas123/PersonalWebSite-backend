@@ -1,7 +1,8 @@
+const fs = require("fs");
+const path = require("path");
 const bcryp = require('bcrypt');
 const jwt = require("../services/jwt");
 const User = require('../models/user');
-const user = require('../models/user');
 
 function signUp(req, res) {
     const user = new User();
@@ -101,9 +102,51 @@ function getUsersActive(req, res) {
     })
 }
 
+function uploadAvatar(req, res) {
+    const params = req.params;
+
+    User.findById({_id: params.id}, (err, userData) => {
+        if(err){
+            res.status(500).send({message: "error del servidor"})
+        }else{
+            if(!userData){
+                res.status(404).send({message: "no se ha encontrado ningun usuario"})
+            }else{
+                let user = userData;
+                console.log(req.files);
+                if(req.files){
+                    let filePath = req.files.avatar.path.split("\\").join("/");
+                    let fileSplit = filePath.split("/");
+                    let fileName = fileSplit[2];
+                    let extSplit = fileName.split(".");
+                    let fileExt = extSplit[1];
+                    
+                    if(fileExt !== "png" && fileExt !== "jpg" ) {
+                        res.status(200).send({message: "la extension de la imagen no es valida (only .jpg and .png)"})
+                    }else{
+                        user.avatar = fileName;
+                        User.findByIdAndUpdate({_id: params.id}, user, (err, userResult) => {
+                            if(err){
+                                res.status(500).send({message: "error del servidor"})
+                            }else{
+                                if(!userResult){
+                                    res.status(404).send({message: "no se encontro el usuario"});
+                                }else{
+                                    res.status(200).send({avatarName: fileName});
+                                }
+                            }
+                        })
+                    }
+                }
+            }
+        }
+    })
+}
+
 module.exports = {
     signUp,
     signIn,
     getUsers,
-    getUsersActive
+    getUsersActive,
+    uploadAvatar
 }
