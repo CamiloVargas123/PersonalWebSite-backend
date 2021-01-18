@@ -143,10 +143,24 @@ function uploadAvatar(req, res) {
     })
 }
 
+function getAvatar(req, res) {
+    const avatarName = req.params.avatarName;
+    const filePath = "./uploads/avatar/"+avatarName;
+
+    fs.exists(filePath, exists => {
+        if(!exists){
+            res.status(404).send({message: "el avatar no existe"});
+        }else {
+            res.sendFile(path.resolve(filePath));
+        }
+    })
+}
+
 module.exports = {
     signUp,
     signIn,
     getUsers,
     getUsersActive,
-    uploadAvatar
+    uploadAvatar,
+    getAvatar
 }
