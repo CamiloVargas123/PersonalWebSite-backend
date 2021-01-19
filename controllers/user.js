@@ -3,6 +3,7 @@ const path = require("path");
 const bcryp = require('bcrypt');
 const jwt = require("../services/jwt");
 const User = require('../models/user');
+const { param, use } = require("../routers/user");
 
 function signUp(req, res) {
     const user = new User();
@@ -156,11 +157,29 @@ function getAvatar(req, res) {
     })
 }
 
+const updateUser = async (req, res) => {
+    const userData = req.body;
+    const params = req.params;
+
+    try {
+        const userDB = await User.findByIdAndUpdate({_id: params.id}, userData);
+        if(!userDB){
+            res.status(404).send({message: "Usuario no existe"});
+            return;
+        }
+        res.status(200).send({message: "usuario actualizado correctamente"});
+    } 
+    catch (error){
+        res.status(500).send({message: "Error del servidor: "+error});
+    }
+}
+
 module.exports = {
     signUp,
     signIn,
     getUsers,
     getUsersActive,
     uploadAvatar,
-    getAvatar
+    getAvatar,
+    updateUser
 }
