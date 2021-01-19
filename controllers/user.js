@@ -158,7 +158,8 @@ function getAvatar(req, res) {
 }
 
 const updateUser = async (req, res) => {
-    const userData = req.body;
+    let userData = req.body;
+    userData.email = req.body.email.toLowerCase();
     const params = req.params;
 
     try {
