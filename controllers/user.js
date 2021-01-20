@@ -8,7 +8,6 @@ const { param, use } = require("../routers/user");
 function signUp(req, res) {
     const user = new User();
     const {name, lastname, email, password, repeatPassword} = req.body;
-    console.log(req.body);
 
     const saltRounds = 10;
 
@@ -157,18 +156,26 @@ function getAvatar(req, res) {
     })
 }
 
-const updateUser = async (req, res) => {
+async function updateUser (req, res) {
     let userData = req.body;
     userData.email = req.body.email.toLowerCase();
     const params = req.params;
+    const saltRounds = 10;   
 
-    try {
-        const userDB = await User.findByIdAndUpdate({_id: params.id}, userData);
-        if(!userDB){
-            res.status(404).send({message: "Usuario no existe"});
-            return;
+    try {       
+        try{
+            if(userData.password){                
+                userData.password = await bcryp.hash(userData.password, saltRounds);
+            }
         }
-        res.status(200).send({message: "usuario actualizado correctamente"});
+        finally {
+            const userDB = await User.findByIdAndUpdate({_id: params.id}, userData);
+            if(!userDB){
+                res.status(404).send({message: "Usuario no existe"});
+                return;
+            }
+            res.status(200).send({message: "usuario actualizado correctamente"});
+        }        
     } 
     catch (error){
         res.status(500).send({message: "Error del servidor: "+error});
