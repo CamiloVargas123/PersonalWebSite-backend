@@ -3,8 +3,7 @@ const UserController = require('../controllers/user');
 const multipart = require("connect-multiparty");
 
 const md_auth = require("../middleware/authenticated");
-const md_upload_avatar = multipart({uploadDir: "./uploads/avatar"})
-//const user = require('../models/user');
+const md_upload_avatar = multipart({uploadDir: "./uploads/avatar"});
 
 const api = express.Router();
 
@@ -17,5 +16,6 @@ api.get('/get-avatar/:avatarName', UserController.getAvatar);
 api.put('/update-user/:id', [md_auth.ensureAuth], UserController.updateUser);
 api.put('/activate-user/:id', [md_auth.ensureAuth], UserController.activateUser);
 api.delete('/delete-user/:id', [md_auth.ensureAuth], UserController.deleteUser);
+api.post('/sign-up-admin', [md_auth.ensureAuth], UserController.signUp);
 
 module.exports = api;

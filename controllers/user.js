@@ -3,11 +3,10 @@ const path = require("path");
 const bcryp = require('bcrypt');
 const jwt = require("../services/jwt");
 const User = require('../models/user');
-const { param, use } = require("../routers/user");
 
-function signUp(req, res) {
+async function signUp(req, res) {
     const user = new User();
-    const {name, lastname, email, password, repeatPassword} = req.body;
+    const {name, lastname, email, password, repeatPassword, active} = req.body;
 
     const saltRounds = 10;
 
@@ -15,7 +14,7 @@ function signUp(req, res) {
     user.lastname = lastname;
     user.email = email.toLowerCase();
     user.role = "admin";
-    user.active = false;
+    user.active = active;
 
     if(!password || !repeatPassword) {
         res.status(404).send({message: "Las contraseñas no exiten"})
@@ -23,7 +22,7 @@ function signUp(req, res) {
         if(password !== repeatPassword){
             res.status(409).send({message: "Las contraseñas deben coincidir"})
         }else{
-            bcryp.hash(password, saltRounds, (err, hash) => {
+            await bcryp.hash(password, saltRounds, (err, hash) => {
                 if(err){
                     res.status(500).send({message: "Error al encriptar la contraseña"})
                 }else{
