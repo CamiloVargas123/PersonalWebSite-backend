@@ -37,7 +37,25 @@ async function getMenus(req, res){
     })
 }
 
+async function updateMenu(req, res){
+    let menuData = req.body;
+    const params = req.params;
+
+    await Menu.findByIdAndUpdate(params.id, menuData, (err, menuUpdate) => {
+        if(err){
+            res.status(500).send({message: "error del servidor"});
+        }else{
+            if(!menuUpdate){
+                res.status(404).send({message: "No se encontró el menu"});
+            }else{
+                res.status(200).send({message: "Menu actualizado"});
+            }
+        }
+    })
+}
+
 module.exports = {
     addMenu,
-    getMenus
+    getMenus,
+    updateMenu
 }
