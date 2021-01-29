@@ -54,8 +54,30 @@ async function updateMenu(req, res){
     })
 }
 
+async function activateMenu(req, res){
+    const {id} = req.params;
+    const {active} = req.body;
+
+    await Menu.findByIdAndUpdate(id, {active}, (err, menuUpdate) => {
+        if(err){
+            res.status(500).send({message: "Error del servidor"});
+        }else{
+            if(!menuUpdate){
+                res.status(404).send({message: "No se ha encontrado el menu"});
+            }else{
+                if(active === true){
+                    res.status(200).send({message: "Menu activado"});
+                }else{
+                    res.status(200).send({message: "Menu desactivado"});
+                }
+            }
+        }
+    })
+}
+
 module.exports = {
     addMenu,
     getMenus,
-    updateMenu
+    updateMenu,
+    activateMenu
 }
