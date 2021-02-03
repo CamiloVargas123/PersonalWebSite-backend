@@ -75,9 +75,26 @@ async function activateMenu(req, res){
     })
 }
 
+async function deleteMenu(req, res){
+    const {id} = req.params;
+
+    await Menu.findByIdAndRemove(id, (err, menuDelete) => {
+        if(err){
+            res.status(500).send({message: "Error del servidor"})
+        }else{
+            if(!menuDelete){
+                res.status(404).send({message: "Menu no encontrado"})
+            }else{
+                res.status(200).send({message: "Menu eliminado"})
+            }
+        }
+    })
+}
+
 module.exports = {
     addMenu,
     getMenus,
     updateMenu,
-    activateMenu
+    activateMenu,
+    deleteMenu
 }
