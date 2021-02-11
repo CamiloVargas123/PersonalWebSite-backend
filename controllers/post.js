@@ -1,10 +1,10 @@
 const Post = require("../models/post");
 
-function addPost(req, res){
+async function addPost(req, res){
     const body = req.body;
     const post = new Post(body);
 
-    post.save((err, postStored) => {
+    await post.save((err, postStored) => {
         if(err){
             res.status(500).send({code :500, message: "Error del servidor "+err})
         }else{
@@ -17,6 +17,29 @@ function addPost(req, res){
     })
 }
 
+async function getPosts(req, res){
+    const {page = 1, limit = 10} = req.query;
+
+    const option = {
+        page: page,
+        limit: parseInt(limit),
+        sort: {date: "desc"}
+    }
+
+    await Post.paginate({}, option, (err, postStored) => {
+        if(err){
+            res.status(500).send({code: 500, message: "Error del servidor "+ err});
+        }else{
+            if(!postStored){
+                res.status(404).send({code: 404, message: "No se encontro el post"});
+            }else{
+                res.status(200).send({code: 200, posts: postStored});
+            }
+        }
+    })
+}
+
 module.exports = {
-    addPost
+    addPost,
+    getPosts
 };
