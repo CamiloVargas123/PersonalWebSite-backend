@@ -72,9 +72,26 @@ async function deletePost(req, res){
     })
 }
 
+async function getPost(req, res){
+    const {url} = req.params;
+
+    await Post.findOne({url}, (err, postStored) => {
+        if(err){
+            res.status(500).send({code: 500, message: "Error del servidor "+ err});
+        }else{
+            if(!postStored){
+                res.status(404).send({code: 404, message: "No se encontro el post"});
+            }else{
+                res.status(200).send({code: 200, post: postStored});
+            }
+        }
+    })
+}
+
 module.exports = {
     addPost,
     getPosts,
     updatePost,
-    deletePost
+    deletePost,
+    getPost
 };
