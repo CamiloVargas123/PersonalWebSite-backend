@@ -56,8 +56,25 @@ async function updatePost(req, res){
     })
 }
 
+async function deletePost(req, res){
+    const {id} = req.params;
+
+    await Post.findByIdAndDelete(id, (err, postDelete) => {
+        if(err){
+            res.status(500).send({code: 500, message: "Error del servidor "+ err});
+        }else{
+            if(!postDelete){
+                res.status(404).send({code: 404, message: "No se encontro el post"});
+            }else{
+                res.status(200).send({code: 200, message: "Post eliminado"});
+            }
+        }
+    })
+}
+
 module.exports = {
     addPost,
     getPosts,
-    updatePost
+    updatePost,
+    deletePost
 };
