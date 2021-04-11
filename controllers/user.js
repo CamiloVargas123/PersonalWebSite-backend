@@ -112,7 +112,6 @@ function uploadAvatar(req, res) {
                 res.status(404).send({message: "no se ha encontrado ningun usuario"})
             }else{
                 let user = userData;
-                console.log(req.files);
                 if(req.files){
                     let filePath = req.files.avatar.path.split("\\").join("/");
                     let fileSplit = filePath.split("/");

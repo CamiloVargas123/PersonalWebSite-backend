@@ -6,7 +6,11 @@ const { API_VERSION, IP_SERVER, PORT_DB } = require('./config');
 
 mongoose.set('useFindAndModify', false);
 mongoose.connect(
-    `mongodb://${IP_SERVER}:${PORT_DB}/cursoreact`,
+    //para que funcione en Localhost
+    //`mongodb://${IP_SERVER}:${PORT_DB}/cursoreact`,
+
+    //Para montarlo en el servidor de atlas
+    `mongodb+srv://CamiloDBadmin:multimedia@cursostackmern.mb1ju.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
     {useNewUrlParser: true, useUnifiedTopology: true },
     (err, res) => {
         if(err){
